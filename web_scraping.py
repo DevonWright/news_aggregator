@@ -27,7 +27,6 @@ def nytimes_scraper(url):
     titles = []
     contents = []
     links = []
-
     for index, article in zip(range(limit), articles):
         # Get article title
         title = article.find('h2').get_text()
@@ -75,7 +74,6 @@ def huffpost_scraper(url):
     titles = []
     links = []
     contents = []
-
     for index, article in zip(range(limit), articles):
         if article.find('h2') == None:
             continue
@@ -122,7 +120,6 @@ def apnews_scraper(url):
     titles = []
     links = [] 
     contents = []
-
     for index, article in zip(range(limit), articles):
         # If the hypelink element contains a h1 element it is a link to an article.
         if article.find('h1') == None:
@@ -152,9 +149,45 @@ def apnews_scraper(url):
 
     return titles, links, contents
 
-def npr_scarper():
-    pass
+def npr_scarper(url):
+    limit = 5  # Used to limit the amount of articles to be scraped.
 
+    # Use Requests to get content for webpage
+    response = requests.get(url)
+
+    # Use Beautiful Soup to parse HTML and find articles
+    soup = BeautifulSoup(response.content, 'html5lib')
+    articles = soup.find('div', class_="list-overflow").find_all('div', class_="item-info")
+    
+    # Store the title, link, and contents of each article in a list
+    titles = []
+    links = []
+    contents = []
+    for index, article in zip(range(limit), articles):
+        # Get article title
+        title = article.find('h2').get_text()
+        titles.append(title)
+
+        # Get article link
+        link = article.find('h2').find('a')['href']
+        links.append(link)
+
+        # Get paragraphs from the article that are related to the article story
+        response = requests.get(link)
+        soup = BeautifulSoup(response.content, 'html5lib')
+        paragraphs = soup.find('div', class_="storytext storylocation linkLocation").find_all('p')
+        
+        # Get content from each div
+        content = []
+        for paragraph in paragraphs:
+            content.append(paragraph.get_text())
+
+        # Join all paragraphs content together
+        content = " ".join(content)
+        contents.append(content)
+    
+    return titles, links, contents
+    
 def reuters_scraper():
     pass
 
@@ -175,14 +208,19 @@ def ny_tester():
         print("Title: {} \n\nLink: {}\n\n{}".format(titles[i], links[i], contents[i]))
         print("\n\n\n")
 
-def apnews_tester():
+def ap_tester():
     titles, links, contents = apnews_scraper('https://apnews.com/apf-entertainment')
 
     for i in range(0, len(titles)):
         print("Title: {} \n\nLink: {}\n\n{}".format(titles[i], links[i], contents[i]))
         print("\n\n\n")
 
-apnews_tester()
-ny_tester()
-huff_tester()
+def npr_tester():
+    titles, links, contents = npr_scarper('https://www.npr.org/sections/business/')
+
+    for i in range(0, len(titles)):
+        print("Title: {} \n\nLink: {}\n\n{}".format(titles[i], links[i], contents[i]))
+        print("\n\n\n")
+
+npr_tester()
 
