@@ -1,16 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
+from textblob import TextBlob
 
 """
 TODO: 1) Store links in dictionaries (Key = Website Link, Values = Number). The number will be used to determine which scraper to use.
       2) Return Titles , Links, and Contents from scrapers in a Pandas dataframe.
 """
 # These links will be used later on in development
-politic_links = ['https://www.huffpost.com/news/politics', 'https://www.nytimes.com/section/politics', 'https://apnews.com/apf-politics', 'https://www.npr.org/sections/politics/', 'https://www.reuters.com/politics']
-entertainment_links = ['https://www.huffpost.com/entertainment/', 'https://apnews.com/apf-entertainment', 'https://www.bbc.com/news/entertainment_and_arts']
-sport_links = ['https://www.nytimes.com/section/sports', 'https://apnews.com/apf-sports', 'https://www.bbc.com/sport', 'https://www.reuters.com/news/sports'] 
-tech_links= ['https://www.nytimes.com/section/technology', 'https://apnews.com/apf-technology', 'https://www.bbc.com/news/technology', 'https://www.npr.org/sections/technology/', 'https://www.reuters.com/news/technology']
-business_links = ['https://www.nytimes.com/section/business', 'https://apnews.com/apf-business', 'https://www.npr.org/sections/business/', 'https://www.reuters.com/finance']
+politic_links = ['https://www.huffpost.com/news/politics', 'https://www.nytimes.com/section/politics', 'https://apnews.com/apf-politics', 'https://www.npr.org/sections/politics/']
+entertainment_links = ['https://www.huffpost.com/entertainment/', 'https://apnews.com/apf-entertainment']
+sport_links = ['https://www.nytimes.com/section/sports', 'https://apnews.com/apf-sports'] 
+tech_links= ['https://www.nytimes.com/section/technology', 'https://apnews.com/apf-technology', 'https://www.npr.org/sections/technology/', 'https://www.reuters.com/news/technology']
+business_links = ['https://www.nytimes.com/section/business', 'https://apnews.com/apf-business', 'https://www.npr.org/sections/business/']
 
 def nytimes_scraper(url):
     limit = 5  # Used to limit the amount of articles to be scraped
@@ -187,40 +188,35 @@ def npr_scarper(url):
         contents.append(content)
     
     return titles, links, contents
-    
-def reuters_scraper():
-    pass
-
-def bbc_scraper():
-    pass
 
 def huff_tester():
     titles, links, contents = huffpost_scraper('https://www.huffpost.com/news/politics')
 
     for i in range(0, len(titles)):
-        print("Title: {} \n\nLink: {}\n\n{}".format(titles[i], links[i], contents[i]))
+        sentiment = TextBlob(contents[i]).sentiment
+        print("Title: {} \n\nLink: {} \n\nSentiment: Polarity = {}, Subjectivity = {}\n\n{}".format(titles[i], links[i], sentiment[0], sentiment[1], contents[i]))
         print("\n\n\n")
 
 def ny_tester():
     titles, links, contents = nytimes_scraper('https://www.nytimes.com/section/politics')
 
     for i in range(0, len(titles)):
-        print("Title: {} \n\nLink: {}\n\n{}".format(titles[i], links[i], contents[i]))
+        sentiment = TextBlob(contents[i]).sentiment
+        print("Title: {} \n\nLink: {} \n\nSentiment: Polarity = {}, Subjectivity = {}\n\n{}".format(titles[i], links[i], sentiment[0], sentiment[1], contents[i]))
         print("\n\n\n")
 
 def ap_tester():
     titles, links, contents = apnews_scraper('https://apnews.com/apf-entertainment')
 
     for i in range(0, len(titles)):
-        print("Title: {} \n\nLink: {}\n\n{}".format(titles[i], links[i], contents[i]))
+        sentiment = TextBlob(contents[i]).sentiment
+        print("Title: {} \n\nLink: {} \n\nSentiment: Polarity = {}, Subjectivity = {}\n\n{}".format(titles[i], links[i], sentiment[0], sentiment[1], contents[i]))
         print("\n\n\n")
 
 def npr_tester():
     titles, links, contents = npr_scarper('https://www.npr.org/sections/business/')
 
     for i in range(0, len(titles)):
-        print("Title: {} \n\nLink: {}\n\n{}".format(titles[i], links[i], contents[i]))
+        sentiment = TextBlob(contents[i]).sentiment
+        print("Title: {} \n\nLink: {} \n\nSentiment: Polarity = {}, Subjectivity = {}\n\n{}".format(titles[i], links[i], sentiment[0], sentiment[1], contents[i]))
         print("\n\n\n")
-
-npr_tester()
-
