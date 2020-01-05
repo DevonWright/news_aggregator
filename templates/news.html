@@ -13,5 +13,13 @@
     <input type="submit" name="key" value="Tech" />
     <input type="submit" name="key" value="Business" />
 </form>
+<ul>
+    {% for article in articles %}
+    <li>
+        <h3>{{article.title}}</h3>
+        <a href="{{article.link}}">{{article.link}}</a>
+        <p>{{article.content}}</p>
+    </li>
+    {% endfor %}
+</ul>
 {% endblock %}
-
