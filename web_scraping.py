@@ -1,20 +1,12 @@
+import os
+import json 
 import requests
+from article import Article
 from bs4 import BeautifulSoup
 from textblob import TextBlob
 
-"""
-TODO: 1) Store links in dictionaries (Key = Website Link, Values = Number). The number will be used to determine which scraper to use.
-      2) Return Titles , Links, and Contents from scrapers in a Pandas dataframe.
-"""
-# These links will be used later on in development
-politic_links = ['https://www.huffpost.com/news/politics', 'https://www.nytimes.com/section/politics', 'https://apnews.com/apf-politics', 'https://www.npr.org/sections/politics/']
-entertainment_links = ['https://www.huffpost.com/entertainment/', 'https://apnews.com/apf-entertainment']
-sport_links = ['https://www.nytimes.com/section/sports', 'https://apnews.com/apf-sports'] 
-tech_links= ['https://www.nytimes.com/section/technology', 'https://apnews.com/apf-technology', 'https://www.npr.org/sections/technology/', 'https://www.reuters.com/news/technology']
-business_links = ['https://www.nytimes.com/section/business', 'https://apnews.com/apf-business', 'https://www.npr.org/sections/business/']
-
 def nytimes_scraper(url):
-    limit = 5  # Used to limit the amount of articles to be scraped
+    limit = 3  # Used to limit the amount of articles to be scraped
 
     # Use Requests to get content from webpage
     website_domain = 'https://www.nytimes.com'
@@ -25,20 +17,18 @@ def nytimes_scraper(url):
     articles = soup.find_all('div', class_='css-1l4spti')
 
     # Store the title, link, and contents of each article in a list
-    titles = []
-    contents = []
-    links = []
+    usable_articles = []
     for index, article in zip(range(limit), articles):
+        this_article = Article()
+
         # Get article title
-        title = article.find('h2').get_text()
-        titles.append(title)
+        this_article.title = article.find('h2').get_text()
 
         # Get article link
-        link = website_domain + article.find('a')['href']
-        links.append(link)
+        this_article.link = website_domain + article.find('a')['href']
 
         # Get divisions (div's) from the article that are related to the article story.
-        response = requests.get(link)
+        response = requests.get(this_article.link)
         soup = BeautifulSoup(response.content, 'html5lib')
         divisions = soup.find_all('div', class_='css-1fanzo5 StoryBodyCompanionColumn')
         
@@ -55,13 +45,13 @@ def nytimes_scraper(url):
             content_from_each_div.append(div_content) 
 
         # Join all div contents together
-        content_from_each_div = " ".join(content_from_each_div)
-        contents.append(content_from_each_div)
+        this_article.content = " ".join(content_from_each_div)
+        usable_articles.append(this_article)
 
-    return titles, links, contents
+    return usable_articles
 
 def huffpost_scraper(url):
-    limit = 5  # Used to limit the amount of articles to be scraped.
+    limit = 3  # Used to limit the amount of articles to be scraped.
     
     # Use Requests to get content for webpage
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36'}  # This page will reject GET requests that do not identify a User-Agent.
@@ -72,23 +62,21 @@ def huffpost_scraper(url):
     articles = soup.find_all('div', class_='zone__content')[2].find_all('div', class_="card")
     
     # Store the title, link, and contents of each article in a list
-    titles = []
-    links = []
-    contents = []
+    usable_articles = []
     for index, article in zip(range(limit), articles):
         if article.find('h2') == None:
             continue
         else:
+            this_article = Article()
+
             # Get article title
-            title = article.find('h2').get_text()
-            titles.append(title)
+            this_article.title = article.find('h2').get_text()
 
             # Get article link
-            link = article.find('a')['href']
-            links.append(link)
+            this_article.link = article.find('a')['href']
 
             # Get divisions (div's) from the article that are related to the article story.
-            response = requests.get(link, headers=headers)
+            response = requests.get(this_article.link, headers=headers)
             soup = BeautifulSoup(response.content, 'html5lib')
             divisions = soup.find_all('div', class_='content-list-component yr-content-list-text text')
             
@@ -101,10 +89,10 @@ def huffpost_scraper(url):
                     content.append(div.find('p').get_text())
 
             # Join all div content together
-            content = " ".join(content)
-            contents.append(content)
+            this_article.content = " ".join(content)
+            usable_articles.append(this_article)
 
-    return titles, links, contents
+    return usable_articles
 
 def apnews_scraper(url):
     limit = 10  # Will not find articles equal to the limit due to inconsistent HTML.
@@ -118,24 +106,22 @@ def apnews_scraper(url):
     articles = soup.find_all('article', class_='feed')[0].find_all('a')  # Class names on this site is inconsistent, find all hyperlinks.
 
     # Store the title, link, and contents of each article in a list
-    titles = []
-    links = [] 
-    contents = []
+    usable_articles = []
     for index, article in zip(range(limit), articles):
         # If the hypelink element contains a h1 element it is a link to an article.
         if article.find('h1') == None:
             continue
         else:
+            this_article = Article()
+
             # Get article title
-            title = article.find('h1').get_text()
-            titles.append(title)
+            this_article.title = article.find('h1').get_text()
 
             # Get article link
-            link = website_domain + article['href']
-            links.append(link)
+            this_article.link = website_domain + article['href']
 
             # Get paragraphs from the article that are related to the article story.
-            response = requests.get(link)
+            response = requests.get(this_article.link)
             soup = BeautifulSoup(response.content, 'html5lib')
             paragraphs = soup.find_all('p')
 
@@ -145,13 +131,13 @@ def apnews_scraper(url):
                 content.append(paragraph.get_text())
 
             # Join all paragraph content together and append to list
-            content = " ".join(content)
-            contents.append(content)
+            this_article.content = " ".join(content)
+            usable_articles.append(this_article)
 
-    return titles, links, contents
+    return usable_articles
 
 def npr_scarper(url):
-    limit = 5  # Used to limit the amount of articles to be scraped.
+    limit = 3  # Used to limit the amount of articles to be scraped.
 
     # Use Requests to get content for webpage
     response = requests.get(url)
@@ -161,20 +147,18 @@ def npr_scarper(url):
     articles = soup.find('div', class_="list-overflow").find_all('div', class_="item-info")
     
     # Store the title, link, and contents of each article in a list
-    titles = []
-    links = []
-    contents = []
+    usable_articles = []
     for index, article in zip(range(limit), articles):
+        this_article = Article()
+
         # Get article title
-        title = article.find('h2').get_text()
-        titles.append(title)
-
+        this_article.title = article.find('h2').get_text()
+        
         # Get article link
-        link = article.find('h2').find('a')['href']
-        links.append(link)
-
+        this_article.link = article.find('h2').find('a')['href']
+    
         # Get paragraphs from the article that are related to the article story
-        response = requests.get(link)
+        response = requests.get(this_article.link)
         soup = BeautifulSoup(response.content, 'html5lib')
         paragraphs = soup.find('div', class_="storytext storylocation linkLocation").find_all('p')
         
@@ -184,39 +168,42 @@ def npr_scarper(url):
             content.append(paragraph.get_text())
 
         # Join all paragraphs content together
-        content = " ".join(content)
-        contents.append(content)
+        this_article.content = " ".join(content)
+        usable_articles.append(this_article)
     
-    return titles, links, contents
+    return usable_articles
 
-def huff_tester():
-    titles, links, contents = huffpost_scraper('https://www.huffpost.com/news/politics')
+def get_articles(key):
+    
+    article_links = json.loads(open('links.json').read())
+    articles = []
 
-    for i in range(0, len(titles)):
-        sentiment = TextBlob(contents[i]).sentiment
-        print("Title: {} \n\nLink: {} \n\nSentiment: Polarity = {}, Subjectivity = {}\n\n{}".format(titles[i], links[i], sentiment[0], sentiment[1], contents[i]))
-        print("\n\n\n")
+    if key == "Politics":
+        for website in article_links[key]:
+            articles += scrape(website['url'], website['source'])
+    elif key == "Entertainment":
+        for website in article_links[key]:
+            articles += scrape(website['url'], website['source'])
+    elif key == "Sports":
+        for website in article_links[key]:
+            articles += scrape(website['url'], website['source'])
+    elif key == "Tech":
+        for website in article_links[key]:
+            articles += scrape(website['url'], website['source'])
+    elif key == "Business":
+        for website in article_links[key]:
+            articles += scrape(website['url'], website['source'])
 
-def ny_tester():
-    titles, links, contents = nytimes_scraper('https://www.nytimes.com/section/politics')
+    return articles
 
-    for i in range(0, len(titles)):
-        sentiment = TextBlob(contents[i]).sentiment
-        print("Title: {} \n\nLink: {} \n\nSentiment: Polarity = {}, Subjectivity = {}\n\n{}".format(titles[i], links[i], sentiment[0], sentiment[1], contents[i]))
-        print("\n\n\n")
-
-def ap_tester():
-    titles, links, contents = apnews_scraper('https://apnews.com/apf-entertainment')
-
-    for i in range(0, len(titles)):
-        sentiment = TextBlob(contents[i]).sentiment
-        print("Title: {} \n\nLink: {} \n\nSentiment: Polarity = {}, Subjectivity = {}\n\n{}".format(titles[i], links[i], sentiment[0], sentiment[1], contents[i]))
-        print("\n\n\n")
-
-def npr_tester():
-    titles, links, contents = npr_scarper('https://www.npr.org/sections/business/')
-
-    for i in range(0, len(titles)):
-        sentiment = TextBlob(contents[i]).sentiment
-        print("Title: {} \n\nLink: {} \n\nSentiment: Polarity = {}, Subjectivity = {}\n\n{}".format(titles[i], links[i], sentiment[0], sentiment[1], contents[i]))
-        print("\n\n\n")
+def scrape(link, source):
+    articles = []
+    if source == "huffpost":
+        articles += huffpost_scraper(link)
+    elif source == "nytimes":
+        articles += nytimes_scraper(link)
+    elif source == "apnews":
+        articles += apnews_scraper(link)
+    elif source == "npr":
+        articles += npr_scarper(link)
+    return articles
