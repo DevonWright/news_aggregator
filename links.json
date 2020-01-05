@@ -1,0 +1,68 @@
+{
+    "Politics": [
+        {
+            "url": "https://www.huffpost.com/news/politics",
+            "source": "huffpost"
+        },
+        {
+            "url": "https://www.nytimes.com/section/politics",
+            "source": "nytimes"
+        },
+        {
+            "url": "https://apnews.com/apf-politics",
+            "source": "apnews"
+        },
+        {
+            "url": "https://www.npr.org/sections/politics/",
+            "source": "npr"
+        }
+    ],
+    "Entertainment": [
+        {
+            "url": "https://www.huffpost.com/entertainment/",
+            "source": "huffpost"
+        },
+        {
+            "url": "https://apnews.com/apf-entertainment",
+            "source": "apnews"
+        }
+    ],
+    "Sports": [
+        {
+            "url": "https://www.nytimes.com/section/sports",
+            "source": "nytimes"
+        },
+        {
+            "url": "https://apnews.com/apf-sports",
+            "source": "apnews"
+        }
+    ],
+    "Tech": [
+        {
+            "url": "https://www.nytimes.com/section/technology",
+            "source": "nytimes"
+        },
+        {
+            "url": "https://apnews.com/apf-technology",
+            "source": "apnews"
+        },
+        {
+            "url": "https://www.npr.org/sections/technology/",
+            "source": "npr"
+        }
+    ],
+    "Business": [
+        {
+            "url": "https://www.nytimes.com/section/business",
+            "source": "nytimes"
+        },
+        {
+            "url": "https://apnews.com/apf-business",
+            "source": "apnews"
+        },
+        {
+            "url": "https://www.npr.org/sections/business/",
+            "source": "npr"
+        }
+    ]
+}
