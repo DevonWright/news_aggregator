@@ -1,5 +1,4 @@
 from flask import Flask, render_template, url_for, request
-
 import web_scraping
 
 app = Flask(__name__)
@@ -11,8 +10,10 @@ def index():
 @app.route('/news', methods=['POST', 'GET'])
 def news():
     key = request.form['key']
+    if key == "Home":
+        return index()
     articles = web_scraping.get_articles(key)
     return render_template('news.html', articles=articles)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True)

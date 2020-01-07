@@ -46,6 +46,11 @@ def nytimes_scraper(url):
 
         # Join all div contents together
         this_article.content = " ".join(content_from_each_div)
+
+        # Perform sentiment analysis
+        this_article.sentiment = TextBlob(this_article.content).sentiment
+
+        # 
         usable_articles.append(this_article)
 
     return usable_articles
@@ -90,6 +95,10 @@ def huffpost_scraper(url):
 
             # Join all div content together
             this_article.content = " ".join(content)
+
+            # Perform sentiment analysis
+            this_article.sentiment = TextBlob(this_article.content).sentiment
+
             usable_articles.append(this_article)
 
     return usable_articles
@@ -132,6 +141,10 @@ def apnews_scraper(url):
 
             # Join all paragraph content together and append to list
             this_article.content = " ".join(content)
+
+            # Perform sentiment analysis
+            this_article.sentiment = TextBlob(this_article.content).sentiment
+
             usable_articles.append(this_article)
 
     return usable_articles
@@ -169,6 +182,10 @@ def npr_scarper(url):
 
         # Join all paragraphs content together
         this_article.content = " ".join(content)
+
+        # Perform sentiment analysis
+        this_article.sentiment = TextBlob(this_article.content).sentiment
+        
         usable_articles.append(this_article)
     
     return usable_articles
@@ -178,21 +195,8 @@ def get_articles(key):
     article_links = json.loads(open('links.json').read())
     articles = []
 
-    if key == "Politics":
-        for website in article_links[key]:
-            articles += scrape(website['url'], website['source'])
-    elif key == "Entertainment":
-        for website in article_links[key]:
-            articles += scrape(website['url'], website['source'])
-    elif key == "Sports":
-        for website in article_links[key]:
-            articles += scrape(website['url'], website['source'])
-    elif key == "Tech":
-        for website in article_links[key]:
-            articles += scrape(website['url'], website['source'])
-    elif key == "Business":
-        for website in article_links[key]:
-            articles += scrape(website['url'], website['source'])
+    for website in article_links[key]:
+        articles += scrape(website['url'], website['source'])
 
     return articles
 

@@ -1,17 +1,8 @@
 {% extends 'base.html' %}
 
-{% block head %}
-<title>News Aggregator</title>
+{% block description %}
+<p>
+    Here you will find articles from National Pubic Radio (NPR), New York Times, Associate Press (AP) News, and Huffington Post. 
+    Sentiment analysis is performed on each article and each article is given a Polarity and Subjectivity Score.
+</p>
 {% endblock %}
-
-{% block body %}
-<h1>Devon's News Aggregator</h1>
-<form action="{{ url_for('news') }}" method="post">
-    <input type="submit" name="key" value="Politics" />
-    <input type="submit" name="key" value="Entertainment" />
-    <input type="submit" name="key" value="Sports" />
-    <input type="submit" name="key" value="Tech" />
-    <input type="submit" name="key" value="Business" />
-</form>
-{% endblock %}
-

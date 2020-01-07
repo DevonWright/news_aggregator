@@ -1,3 +1,20 @@
 body {
-    font-family: sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #444;
+  margin: 3em 3em 0 3em;
+}
+
+p.disclaimer {
+  color: red;
+}
+
+nav {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+footer {
+  width: 92%;
+  text-align: center;
+  position:fixed;
 }

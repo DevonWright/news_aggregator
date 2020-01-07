@@ -1,24 +1,13 @@
 {% extends 'base.html' %}
 
-{% block head %}
-<title>News Aggregator</title>
-{% endblock %}
-
 {% block body %}
-<h1>Devon's News Aggregator</h1>
-<form action="{{ url_for('news') }}" method="post">
-    <input type="submit" name="key" value="Politics" />
-    <input type="submit" name="key" value="Entertainment" />
-    <input type="submit" name="key" value="Sports" />
-    <input type="submit" name="key" value="Tech" />
-    <input type="submit" name="key" value="Business" />
-</form>
-<ul>
+<ul class="articles">
     {% for article in articles %}
-    <li>
+    <li class="article">
         <h3>{{article.title}}</h3>
-        <a href="{{article.link}}">{{article.link}}</a>
-        <p>{{article.content}}</p>
+        <p>Subjectivity Score = {{article.sentiment[1]}}</p>
+        <p>Polarity Score = {{article.sentiment[0]}}</p>
+        <p>Source: <a href="{{article.link}}" target="_blank">{{article.link}}</a></p>
     </li>
     {% endfor %}
 </ul>
