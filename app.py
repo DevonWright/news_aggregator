@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request
+from flask import Flask, render_template, url_for, request, redirect
 import web_scraping
 
 app = Flask(__name__)
@@ -11,7 +11,7 @@ def index():
 def news():
     key = request.form['key']
     if key == "Home":
-        return index()
+        return redirect('/')
     articles = web_scraping.get_articles(key)
     return render_template('news.html', articles=articles)
 
