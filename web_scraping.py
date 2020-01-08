@@ -16,7 +16,7 @@ def nytimes_scraper(url):
     soup = BeautifulSoup(response.content, 'html5lib')
     articles = soup.find_all('div', class_='css-1l4spti')
 
-    # Store the title, link, and contents of each article in a list
+    # Get the title, link, and contents of each article in a list
     usable_articles = []
     for index, article in zip(range(limit), articles):
         this_article = Article()
@@ -44,13 +44,13 @@ def nytimes_scraper(url):
             div_content = " ".join(div_content)
             content_from_each_div.append(div_content) 
 
-        # Join all div contents together
+        # Join all div contents together and set as articles contents
         this_article.content = " ".join(content_from_each_div)
 
         # Perform sentiment analysis
         this_article.sentiment = TextBlob(this_article.content).sentiment
 
-        # 
+        # Add article to list of articles
         usable_articles.append(this_article)
 
     return usable_articles
@@ -66,7 +66,7 @@ def huffpost_scraper(url):
     soup = BeautifulSoup(response.content, 'html5lib')
     articles = soup.find_all('div', class_='zone__content')[2].find_all('div', class_="card")
     
-    # Store the title, link, and contents of each article in a list
+    # Get the title, link, and contents of each article in a list
     usable_articles = []
     for index, article in zip(range(limit), articles):
         if article.find('h2') == None:
@@ -93,12 +93,13 @@ def huffpost_scraper(url):
                 else:
                     content.append(div.find('p').get_text())
 
-            # Join all div content together
+            # Join all div content together and set as articles contents
             this_article.content = " ".join(content)
 
             # Perform sentiment analysis
             this_article.sentiment = TextBlob(this_article.content).sentiment
 
+            # Add article to list of articles
             usable_articles.append(this_article)
 
     return usable_articles
@@ -114,7 +115,7 @@ def apnews_scraper(url):
     soup = BeautifulSoup(response.content, 'html5lib')
     articles = soup.find_all('article', class_='feed')[0].find_all('a')  # Class names on this site is inconsistent, find all hyperlinks.
 
-    # Store the title, link, and contents of each article in a list
+    # Get the title, link, and contents of each article in a list
     usable_articles = []
     for index, article in zip(range(limit), articles):
         # If the hypelink element contains a h1 element it is a link to an article.
@@ -139,12 +140,13 @@ def apnews_scraper(url):
             for paragraph in paragraphs:
                 content.append(paragraph.get_text())
 
-            # Join all paragraph content together and append to list
+            # Join all paragraph content together and set as articles contents
             this_article.content = " ".join(content)
 
             # Perform sentiment analysis
             this_article.sentiment = TextBlob(this_article.content).sentiment
 
+            # Add article to list of articles
             usable_articles.append(this_article)
 
     return usable_articles
@@ -159,7 +161,7 @@ def npr_scarper(url):
     soup = BeautifulSoup(response.content, 'html5lib')
     articles = soup.find('div', class_="list-overflow").find_all('div', class_="item-info")
     
-    # Store the title, link, and contents of each article in a list
+    # Get the title, link, and contents of each article in a list
     usable_articles = []
     for index, article in zip(range(limit), articles):
         this_article = Article()
@@ -180,28 +182,31 @@ def npr_scarper(url):
         for paragraph in paragraphs:
             content.append(paragraph.get_text())
 
-        # Join all paragraphs content together
+        # Join all paragraphs content together and set as articles contents
         this_article.content = " ".join(content)
 
         # Perform sentiment analysis
         this_article.sentiment = TextBlob(this_article.content).sentiment
         
+        # Add article to list of articles
         usable_articles.append(this_article)
     
     return usable_articles
 
-def get_articles(key):
-    
+def get_articles(category):
+    # Open and read JSON file containing links to news sites
     article_links = json.loads(open('links.json').read())
-    articles = []
 
-    for website in article_links[key]:
+    # Scrape articles from each website the is related to the choosen category
+    articles = []   # List to hold articles scraped from websites
+    for website in article_links[category]:
         articles += scrape(website['url'], website['source'])
 
     return articles
 
 def scrape(link, source):
-    articles = []
+    articles = []   # List to hold articles scraped from websites
+    
     if source == "huffpost":
         articles += huffpost_scraper(link)
     elif source == "nytimes":
