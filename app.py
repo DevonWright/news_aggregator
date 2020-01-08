@@ -10,10 +10,17 @@ def index():
 @app.route('/news', methods=['POST', 'GET'])
 def news():
     key = request.form['key']
+
+    #Toggle is opposite of what appears on screen
+    if request.form.get('sentiment') == "on":
+        sentiment = "off"
+    else:
+        sentiment = "on"
+
     if key == "Home":
         return redirect('/')
-    articles = web_scraping.get_articles(key)
-    return render_template('news.html', articles=articles)
+    articles = web_scraping.get_articles(key, sentiment)
+    return render_template('news.html', articles=articles, sentiment=sentiment)
 
 if __name__ == "__main__":
     app.run(debug=True)

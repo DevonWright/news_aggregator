@@ -5,8 +5,10 @@
     {% for article in articles %}
     <li class="article">
         <h3>{{article.title}}</h3>
-        <p>Subjectivity Score = {{article.sentiment[1]}}</p>
-        <p>Polarity Score = {{article.sentiment[0]}}</p>
+        {% if sentiment == "on" %}
+            <p>Subjectivity Score = {{article.sentiment[1]}}</p>
+            <p>Polarity Score = {{article.sentiment[0]}}</p>
+        {% endif %}
         <p>Source: <a href="{{article.link}}" target="_blank">{{article.link}}</a></p>
     </li>
     {% endfor %}

@@ -28,12 +28,17 @@
 
     <nav>
         <form action="{{ url_for('news') }}" method="POST">
-            <input type="submit" name="key" value="Home" />
-            <input type="submit" name="key" value="Politics" />
-            <input type="submit" name="key" value="Entertainment" />
-            <input type="submit" name="key" value="Sports" />
-            <input type="submit" name="key" value="Tech" />
-            <input type="submit" name="key" value="Business" />
+            <input class="button" type="submit" name="key" value="Home" />
+            <input class="button" type="submit" name="key" value="Politics" />
+            <input class="button" type="submit" name="key" value="Entertainment" />
+            <input class="button" type="submit" name="key" value="Sports" />
+            <input class="button" type="submit" name="key" value="Tech" />
+            <input class="button" type="submit" name="key" value="Business" />
+            <p class="sent">Toggle Sentiment Analysis</p>
+            <label class="switch">
+                <input type="checkbox" name="sentiment">
+                <span class="slider"></span>
+            </label>
         </form>
     </nav>
 
